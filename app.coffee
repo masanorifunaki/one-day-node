@@ -1,5 +1,9 @@
 express = require 'express'
 
+Addition = require './Addition'
+
+console.log Addition.AddNumber 1, 2
+
 app = express()
 
 app.set 'view engine', 'pug'
