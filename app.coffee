@@ -1,8 +1,11 @@
 express = require 'express'
 
 Addition = require './Addition'
+localTutor = require './NodeTutorial'
 
 console.log Addition.AddNumber 1, 2
+
+localTutor.NodeTutorial()
 
 app = express()
 
