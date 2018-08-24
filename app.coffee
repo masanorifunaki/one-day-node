@@ -1,9 +1,10 @@
 express     = require 'express'
 request     = require 'request'
-MongoClient = require('mongodb').MongoClient
+BlueBird    = require 'bluebird'
+MongoClient = BlueBird.promisifyAll(require('mongodb')).MongoClient
 _           = require 'lodash'
 
-url = 'mongodb://localhost:27017/'
+url = 'mongodb://localhost:27017/EmployeeDB'
 
 Addition    = require './Addition'
 localTutor  = require './NodeTutorial'
@@ -30,17 +31,19 @@ app.get '/', (req, res) ->
 app.get '/Employee', (req, res) ->
   str = ''
 
-  MongoClient.connect url, (err, db) =>
-
-    db = db.db 'EmployeeDB'
-    db.collection('Employee').find().toArray (err, results) =>
-
-
-      _.each results, (c) ->
-        if c != null
-          str = str + c._id
-
-      res.send str
+  MongoClient.connectAsync(url)
+    .then (db) =>
+      db = db.db 'EmployeeDB'
+      insertData =
+        name: 'OK'
+      db.collection('Employee').insertOne(insertData)
+        .then (result) =>
+          db.collection('Employee').find({}).toArrayAsync().then (results) =>
+            _.each results, (c) ->
+              console.log c
+              if c != null
+                str = str + c._id
+            res.send str
 
 
 
